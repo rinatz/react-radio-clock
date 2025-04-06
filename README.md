@@ -7,7 +7,7 @@
 - React 19
 - TypeScript
 - Vite
-- UI: Bootstrap
+- Tailwind CSS
 
 ## インストール
 
