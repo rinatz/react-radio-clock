@@ -99,9 +99,7 @@ function RadioClock() {
         </Suspense>
 
         <button
-          onClick={() => {
-            setNowPromise(fetchNow());
-          }}
+          onClick={() => setNowPromise(fetchNow())}
           className="btn btn-primary"
         >
           現在時刻を取得
