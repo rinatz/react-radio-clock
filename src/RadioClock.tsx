@@ -2,6 +2,7 @@ import { Suspense, use, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/ja";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -55,6 +56,17 @@ async function fetchNow(): Promise<Dayjs> {
   return dateTime;
 }
 
+function LoadingDisplay() {
+  return (
+    <>
+      <p className="display-1" style={{ fontSize: "20em" }}>
+        --:--:--
+      </p>
+      <p className="display-6 text-muted">現在時刻を取得しています...</p>
+    </>
+  );
+}
+
 function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
   const [now, setNow] = useState<Dayjs>(use(nowPromise));
 
@@ -68,8 +80,10 @@ function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
 
   return (
     <>
-      <p>{now.format("HH:mm:ss")}</p>
-      <p>{now.format("YYYY年M月D日(dddd)")}</p>
+      <p className="display-1 fw-bold" style={{ fontSize: "20em" }}>
+        {now.format("HH:mm:ss")}
+      </p>
+      <p className="display-6 text-muted">{now.format("YYYY年M月D日(ddd)")}</p>
     </>
   );
 }
@@ -78,19 +92,22 @@ function RadioClock() {
   const [nowPromise, setNowPromise] = useState<Promise<Dayjs>>(fetchNow());
 
   return (
-    <>
-      <Suspense fallback={<p>現在時刻を取得しています...</p>}>
-        <RadioClockDisplay nowPromise={nowPromise} />
-      </Suspense>
+    <div className="d-flex justify-content-center align-items-center min-vh-100">
+      <div className="text-center">
+        <Suspense fallback={<LoadingDisplay />}>
+          <RadioClockDisplay nowPromise={nowPromise} />
+        </Suspense>
 
-      <button
-        onClick={() => {
-          setNowPromise(fetchNow());
-        }}
-      >
-        現在時刻を取得
-      </button>
-    </>
+        <button
+          onClick={() => {
+            setNowPromise(fetchNow());
+          }}
+          className="btn btn-primary"
+        >
+          現在時刻を取得
+        </button>
+      </div>
+    </div>
   );
 }
 
