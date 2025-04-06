@@ -108,7 +108,10 @@ function RadioClock() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100">
+    <div
+      className="d-flex justify-content-center align-items-center min-vh-100"
+      style={{ fontFamily: "Noto Sans Mono" }}
+    >
       <div className="text-center">
         <Suspense fallback={<LoadingDisplay timeZoneName={timeZoneName} />}>
           <RadioClockDisplay nowPromise={nowPromise} />
