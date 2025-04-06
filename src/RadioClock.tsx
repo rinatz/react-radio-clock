@@ -32,7 +32,7 @@ interface TimeData {
   dstActive: boolean;
 }
 
-const fetchNow = async (): Promise<Dayjs> => {
+async function fetchNow(): Promise<Dayjs> {
   const baseUrl = "https://timeapi.io/api/time/current/zone";
 
   const query = new URLSearchParams({
@@ -53,7 +53,7 @@ const fetchNow = async (): Promise<Dayjs> => {
     .tz(data.timeZone);
 
   return dateTime;
-};
+}
 
 function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
   const [now, setNow] = useState<Dayjs>(use(nowPromise));
