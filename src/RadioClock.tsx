@@ -1,4 +1,5 @@
 import { Suspense, use, useEffect, useState } from "react";
+import { Button, Select } from "@headlessui/react";
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -84,7 +85,16 @@ function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
       <p className="text-9xl font-bold tracking-widest">
         {now.format("HH:mm:ss")}
       </p>
-      <p className="text-3xl">{now.format("YYYY年M月D日(ddd)")}</p>
+
+      <p>
+        <span className="text-3xl">{now.format("YYYY")}</span>
+        <span> 年 </span>
+        <span className="text-3xl">{now.format("M")}</span>
+        <span> 月 </span>
+        <span className="text-3xl">{now.format("D")}</span>
+        <span> 日 </span>
+        <span className="text-xl">{now.format("(ddd)")}</span>
+      </p>
     </>
   );
 }
@@ -104,16 +114,16 @@ function RadioClock() {
   };
 
   return (
-    <div className="font-mono min-h-screen flex items-center justify-center">
+    <div className="font-mono min-h-screen flex items-center justify-center bg-gray-800 text-white">
       <div className="text-center space-y-6 p-6 rounded-lg">
         <Suspense fallback={<LoadingDisplay timeZoneName={timeZoneName} />}>
           <RadioClockDisplay nowPromise={nowPromise} />
         </Suspense>
 
-        <select
+        <Select
           defaultValue={timeZone}
           onChange={handleTimeZone}
-          className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 mr-6"
+          className="px-4 py-2 mr-6 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           <option disabled>タイムゾーンを選択</option>
           <option value="Asia/Tokyo">東京</option>
@@ -129,14 +139,14 @@ function RadioClock() {
           <option value="Australia/Sydney">シドニー</option>
           <option value="America/Los_Angeles">ロサンゼルス</option>
           <option value="America/Chicago">シカゴ</option>
-        </select>
+        </Select>
 
-        <button
+        <Button
           onClick={() => setNowPromise(() => fetchNow(timeZone))}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         >
           今すぐ同期
-        </button>
+        </Button>
       </div>
     </div>
   );
