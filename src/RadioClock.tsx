@@ -56,12 +56,8 @@ async function fetchNow(timeZone: string): Promise<Dayjs> {
 function LoadingDisplay({ timeZoneName }: { timeZoneName?: string }) {
   return (
     <>
-      <p className="display-1" style={{ fontSize: "20em" }}>
-        --:--:--
-      </p>
-      <p className="display-6 text-muted">
-        {timeZoneName}の現在時刻を取得しています...
-      </p>
+      <p className="text-9xl font-bold tracking-widest">--:--:--</p>
+      <p className="text-3xl">{timeZoneName}の現在時刻を取得しています...</p>
     </>
   );
 }
@@ -85,10 +81,10 @@ function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
 
   return (
     <>
-      <p className="display-1 fw-bold" style={{ fontSize: "20em" }}>
+      <p className="text-9xl font-bold tracking-widest">
         {now.format("HH:mm:ss")}
       </p>
-      <p className="display-6 text-muted">{now.format("YYYY年M月D日(ddd)")}</p>
+      <p className="text-3xl">{now.format("YYYY年M月D日(ddd)")}</p>
     </>
   );
 }
@@ -108,19 +104,16 @@ function RadioClock() {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center min-vh-100"
-      style={{ fontFamily: "Noto Sans Mono" }}
-    >
-      <div className="text-center">
+    <div className="font-mono min-h-screen flex items-center justify-center">
+      <div className="text-center space-y-6 p-6 rounded-lg">
         <Suspense fallback={<LoadingDisplay timeZoneName={timeZoneName} />}>
           <RadioClockDisplay nowPromise={nowPromise} />
         </Suspense>
 
         <select
-          className="form-select mb-3 w-25 mx-auto"
           defaultValue={timeZone}
           onChange={handleTimeZone}
+          className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 mr-6"
         >
           <option disabled>タイムゾーンを選択</option>
           <option value="Asia/Tokyo">東京</option>
@@ -140,9 +133,9 @@ function RadioClock() {
 
         <button
           onClick={() => setNowPromise(() => fetchNow(timeZone))}
-          className="btn btn-primary"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         >
-          現在時刻を取得
+          今すぐ同期
         </button>
       </div>
     </div>
