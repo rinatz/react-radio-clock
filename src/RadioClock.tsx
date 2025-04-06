@@ -33,12 +33,9 @@ interface TimeData {
   dstActive: boolean;
 }
 
-async function fetchNow(): Promise<Dayjs> {
+async function fetchNow(timeZone: string): Promise<Dayjs> {
   const baseUrl = "https://timeapi.io/api/time/current/zone";
-
-  const query = new URLSearchParams({
-    timeZone: "Asia/Tokyo",
-  });
+  const query = new URLSearchParams({ timeZone });
 
   const response = await fetch(`${baseUrl}?${query}`);
   const data: TimeData = await response.json();
@@ -56,19 +53,27 @@ async function fetchNow(): Promise<Dayjs> {
   return dateTime;
 }
 
-function LoadingDisplay() {
+function LoadingDisplay({ timeZoneName }: { timeZoneName?: string }) {
   return (
     <>
       <p className="display-1" style={{ fontSize: "20em" }}>
         --:--:--
       </p>
-      <p className="display-6 text-muted">現在時刻を取得しています...</p>
+      <p className="display-6 text-muted">
+        {timeZoneName}の現在時刻を取得しています...
+      </p>
     </>
   );
 }
 
 function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
   const [now, setNow] = useState<Dayjs>(use(nowPromise));
+
+  useEffect(() => {
+    nowPromise.then((newNow) => {
+      setNow(() => newNow);
+    });
+  }, [nowPromise]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -89,17 +94,49 @@ function RadioClockDisplay({ nowPromise }: { nowPromise: Promise<Dayjs> }) {
 }
 
 function RadioClock() {
-  const [nowPromise, setNowPromise] = useState<Promise<Dayjs>>(fetchNow());
+  const [timeZone, setTimeZone] = useState<string>("Asia/Tokyo");
+  const [timeZoneName, setTimeZoneName] = useState<string>("東京");
+
+  const [nowPromise, setNowPromise] = useState<Promise<Dayjs>>(
+    fetchNow(timeZone)
+  );
+
+  const handleTimeZone = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTimeZone(() => e.target.value);
+    setTimeZoneName(() => e.target.selectedOptions[0].text);
+    setNowPromise(() => fetchNow(e.target.value));
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100">
       <div className="text-center">
-        <Suspense fallback={<LoadingDisplay />}>
+        <Suspense fallback={<LoadingDisplay timeZoneName={timeZoneName} />}>
           <RadioClockDisplay nowPromise={nowPromise} />
         </Suspense>
 
+        <select
+          className="form-select mb-3 w-25 mx-auto"
+          defaultValue={timeZone}
+          onChange={handleTimeZone}
+        >
+          <option disabled>タイムゾーンを選択</option>
+          <option value="Asia/Tokyo">東京</option>
+          <option value="America/New_York">ニューヨーク</option>
+          <option value="Europe/London">ロンドン</option>
+          <option value="Europe/Paris">パリ</option>
+          <option value="Asia/Shanghai">上海</option>
+          <option value="Asia/Singapore">シンガポール</option>
+          <option value="Asia/Hong_Kong">香港</option>
+          <option value="Asia/Seoul">ソウル</option>
+          <option value="Asia/Bangkok">バンコク</option>
+          <option value="Asia/Dubai">ドバイ</option>
+          <option value="Australia/Sydney">シドニー</option>
+          <option value="America/Los_Angeles">ロサンゼルス</option>
+          <option value="America/Chicago">シカゴ</option>
+        </select>
+
         <button
-          onClick={() => setNowPromise(fetchNow())}
+          onClick={() => setNowPromise(() => fetchNow(timeZone))}
           className="btn btn-primary"
         >
           現在時刻を取得
